@@ -270,8 +270,7 @@ function ProductDetails() {
                   <button
                     onClick={() => {
                       addToCart(product, quantity);
-                      // toast.success("Added to cart successfully! 🛒");
-                      toast.custom((t) => (
+                      toast.custom(() => (
                         <div className="bg-white border border-blue-100 p-4 rounded-2xl shadow-xl flex items-center gap-3">
                           {/* أيقونة أو صورة */}
                           <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">

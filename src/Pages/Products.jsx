@@ -1,32 +1,44 @@
 import axios from "axios";
-import { useEffect, useState, useContext } from "react"; // 1. ضفنا useContext
+import { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
-import { Star, ShoppingBag, RefreshCw, Package, Search } from "lucide-react"; // 2. ضفنا Search
+import { ShoppingBag, Filter, Search } from "lucide-react"; // شيلنا الأيقونات اللي مش مستخدمة
 import Loader from "../components/ui/Loader";
-import { CartContext } from "../components/context/CartContext"; // 3. استدعاء الكارت
+import { CartContext } from "../components/context/CartContext";
+import toast from "react-hot-toast";
 
 function Products() {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const quantity = 1;
 
-  // State للبحث
+  // States للفلاتر
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [maxPrice, setMaxPrice] = useState(2000);
 
-  // استدعاء دالة الإضافة من الكارت
   const { addToCart } = useContext(CartContext);
 
-  // معادلة الفلترة (بتشتغل أوتوماتيك مع كل حرف يتكتب)
-  const filteredProducts = products.filter((product) =>
-    product.title.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  // استخراج الأقسام
+  const categories = ["all", ...new Set(products.map((p) => p.category))];
+
+  // معادلة الفلترة الشاملة
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "all" || product.category === selectedCategory;
+    const matchesPrice = product.price <= maxPrice;
+
+    return matchesSearch && matchesCategory && matchesPrice;
+  });
 
   const getProducts = async () => {
     setIsLoading(true);
     setError(null);
-
     try {
-      const res = await axios.get("https://dummyjson.com/products");
+      const res = await axios.get("https://dummyjson.com/products?limit=0");
       setProducts(res.data.products);
     } catch (err) {
       setError(err.message || "Failed to load products");
@@ -39,150 +51,150 @@ function Products() {
     getProducts();
   }, []);
 
-  const calculateOriginalPrice = (price, discountPercentage) => {
-    return (price / (1 - discountPercentage / 100)).toFixed(2);
-  };
-
-  if (isLoading) {
+  if (isLoading)
     return (
-      <div className="flex justify-center items-center h-screen bg-white">
+      <div className="flex justify-center items-center h-screen">
         <Loader />
       </div>
     );
-  }
-
-  if (error) {
-    return (
-      <div className="flex flex-col justify-center items-center min-h-screen bg-linear-to-br from-red-50 to-orange-50 px-4">
-        <div className="bg-white p-8 rounded-3xl shadow-2xl max-w-md w-full text-center">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Package className="w-8 h-8 text-red-600" />
-          </div>
-          <h2 className="text-red-600 text-2xl font-bold mb-2">
-            Oops! Something went wrong
-          </h2>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <button
-            onClick={getProducts}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-linear-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-          >
-            <RefreshCw className="w-5 h-5" />
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
+  if (error)
+    return <div className="text-center p-10 text-red-600">{error}</div>;
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-indigo-50/30">
-      {/* Header Section with Search */}
-      <section className="bg-linear-to-br from-slate-900 to-slate-800 text-white py-12 md:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-            <div className="space-y-4 text-center md:text-left">
-              <h1 className="text-4xl md:text-5xl font-black">All Products</h1>
-              <p className="text-lg text-slate-300">
-                Explore our collection of {products.length} premium products
-              </p>
-            </div>
-
-            {/* مربع البحث الجديد */}
+      {/* Header & Controls Section */}
+      <section className="bg-linear-to-br from-slate-900 to-slate-800 text-white pt-12 pb-24 px-4">
+        <div className="max-w-7xl mx-auto space-y-8">
+          {/* Title & Search */}
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <h1 className="text-4xl font-black">Shop Now</h1>
             <div className="w-full md:w-96 relative">
               <input
                 type="text"
                 placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 focus:ring-2 focus:ring-blue-500 outline-none transition-all text-white placeholder-gray-400"
               />
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+            </div>
+          </div>
+
+          {/* Filters Area */}
+          <div className="bg-white/5 backdrop-blur-sm p-6 rounded-3xl border border-white/10 flex flex-col lg:flex-row gap-8">
+            {/* 1. Category Filter Buttons (تم التعديل هنا للسكرول العرضي) */}
+            <div className="flex-1 overflow-hidden">
+              <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                <Filter size={16} /> Categories
+              </h3>
+
+              {/* 👇👇 هنا التغيير المهم 👇👇 */}
+              {/* استخدمنا overflow-x-auto عشان السكرول، وشيلنا flex-wrap */}
+              <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide mask-image-linear-gradient-to-r">
+                {categories.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    // ضفنا whitespace-nowrap عشان الكلام ميتكسرش
+                    className={`px-4 py-2 rounded-xl text-sm font-bold capitalize whitespace-nowrap shrink-0 transition-all ${
+                      selectedCategory === cat
+                        ? "bg-blue-600 text-white shadow-lg scale-105"
+                        : "bg-white/10 text-slate-300 hover:bg-white/20"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 2. Price Filter Slider */}
+            <div className="w-full lg:w-72 shrink-0 lg:border-l lg:border-white/10 lg:pl-8">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider">
+                  Max Price
+                </h3>
+                <span className="bg-blue-600 px-3 py-1 rounded-lg text-sm font-bold">
+                  ${maxPrice}
+                </span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="2000"
+                step="50"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(Number(e.target.value))}
+                className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+              />
+              <div className="flex justify-between text-xs text-slate-500 mt-2">
+                <span>$0</span>
+                <span>$2000+</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Products Grid Section */}
-      <section className="py-12 md:py-20 bg-white min-h-[50vh]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Products Grid */}
+      <section className="py-12 -mt-16 relative z-10 px-4">
+        <div className="max-w-7xl mx-auto">
           {filteredProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {/* بنستخدم filteredProducts بدل products */}
               {filteredProducts.map((product) => (
                 <Link key={product.id} to={`/products/${product.id}`}>
-                  <div className="group bg-white rounded-3xl border-2 border-slate-100 hover:border-blue-200 overflow-hidden transition-all duration-300 hover:shadow-2xl cursor-pointer h-full flex flex-col hover:-translate-y-2">
-                    {/* Product Image */}
-                    <div className="relative aspect-square overflow-hidden bg-slate-50">
+                  <div className="group bg-white rounded-3xl border border-slate-100 overflow-hidden hover:shadow-2xl transition-all duration-300 h-full flex flex-col hover:-translate-y-1">
+                    {/* Image */}
+                    <div className="relative aspect-square bg-slate-50 p-6">
                       <img
-                        src={product.thumbnail || product.images?.[0]}
+                        src={product.thumbnail}
                         alt={product.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
                       />
                       {product.discountPercentage > 0 && (
-                        <div className="absolute top-4 right-4 bg-linear-to-r from-red-500 to-pink-600 text-white px-4 py-2 rounded-2xl text-sm font-black shadow-xl">
-                          -{product.discountPercentage.toFixed(0)}%
+                        <div className="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-lg">
+                          -{Math.round(product.discountPercentage)}%
                         </div>
                       )}
                     </div>
 
-                    {/* Product Info */}
-                    <div className="flex-1 flex flex-col p-6">
-                      <h3 className="font-bold text-lg text-slate-900 line-clamp-2 mb-2 group-hover:text-blue-600 transition-colors">
+                    {/* Details */}
+                    <div className="p-5 flex-1 flex flex-col">
+                      <div className="text-xs font-bold text-blue-600 uppercase mb-1">
+                        {product.category}
+                      </div>
+                      <h3 className="font-bold text-slate-900 mb-2 line-clamp-1">
                         {product.title}
                       </h3>
-
-                      <p className="text-sm text-slate-500 font-semibold mb-4">
-                        {product.brand || "Premium Brand"}
-                      </p>
-
-                      {/* Rating */}
-                      <div className="flex items-center gap-2 mb-4">
-                        <div className="flex">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              size={16}
-                              className={
-                                i < Math.round(product.rating)
-                                  ? "fill-yellow-400 text-yellow-400"
-                                  : "fill-slate-200 text-slate-200"
-                              }
-                            />
-                          ))}
-                        </div>
-                        <span className="text-sm font-bold text-slate-700">
-                          {product.rating.toFixed(1)}
+                      <div className="mt-auto flex items-center justify-between">
+                        <span className="text-2xl font-black text-slate-900">
+                          ${product.price}
                         </span>
-                      </div>
-
-                      {/* Price */}
-                      <div className="mt-auto">
-                        <div className="flex items-baseline gap-3 mb-4">
-                          <span className="text-3xl font-black text-slate-900">
-                            ${product.price.toFixed(2)}
-                          </span>
-                          {product.discountPercentage > 0 && (
-                            <span className="text-lg text-slate-400 line-through font-semibold">
-                              $
-                              {calculateOriginalPrice(
-                                product.price,
-                                product.discountPercentage,
-                              )}
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Add to Cart Button */}
                         <button
                           onClick={(e) => {
-                            e.preventDefault(); // مهم: عشان ميفتحش صفحة التفاصيل
-                            addToCart(product); // الإضافة للسلة
-                            // toast.success("Added!"); // لو مركب توست
+                            e.preventDefault();
+                            addToCart(product, quantity);
+                            toast.custom(() => (
+                              <div className="bg-white border border-blue-100 p-4 rounded-2xl shadow-xl flex items-center gap-3">
+                                {/* أيقونة أو صورة */}
+                                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                                  👍
+                                </div>
+                                {/* النص */}
+                                <div>
+                                  <h4 className="font-bold text-gray-800">
+                                    Added to Cart!
+                                  </h4>
+                                  <p className="text-sm text-gray-500">
+                                    Check your cart now.
+                                  </p>
+                                </div>
+                              </div>
+                            ));
                           }}
-                          className="w-full bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white py-3 rounded-2xl font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl group-hover:scale-105"
+                          className="bg-blue-100 hover:bg-blue-600 text-blue-600 hover:text-white p-3 rounded-xl transition-all"
                         >
-                          <ShoppingBag size={18} />
-                          Add to Cart
+                          <ShoppingBag size={20} />
                         </button>
                       </div>
                     </div>
@@ -191,17 +203,20 @@ function Products() {
               ))}
             </div>
           ) : (
-            // رسالة لو مفيش منتجات
-            <div className="text-center py-20">
-              <div className="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Search className="w-10 h-10 text-gray-400" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
-                No products found
-              </h3>
-              <p className="text-gray-500">
-                We couldn't find any products matching "{searchQuery}"
+            <div className="text-center py-20 bg-white rounded-3xl shadow-sm">
+              <p className="text-xl text-slate-400 font-medium">
+                No products match your filters.
               </p>
+              <button
+                onClick={() => {
+                  setSelectedCategory("all");
+                  setSearchQuery("");
+                  setMaxPrice(2000);
+                }}
+                className="mt-4 text-blue-600 font-bold hover:underline"
+              >
+                Clear all filters
+              </button>
             </div>
           )}
         </div>
