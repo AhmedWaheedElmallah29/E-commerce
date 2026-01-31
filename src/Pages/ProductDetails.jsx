@@ -13,7 +13,8 @@ import {
   RefreshCw,
   ArrowLeft,
 } from "lucide-react";
-import { CartContext } from "../components/context/CartContext"; // تأكد من المسار صح
+import { CartContext } from "../components/context/CartContext";
+import toast from "react-hot-toast";
 
 function ProductDetails() {
   const [product, setProduct] = useState(null);
@@ -267,7 +268,27 @@ function ProductDetails() {
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 mb-8">
                   <button
-                    onClick={() => addToCart(product, quantity)}
+                    onClick={() => {
+                      addToCart(product, quantity);
+                      // toast.success("Added to cart successfully! 🛒");
+                      toast.custom((t) => (
+                        <div className="bg-white border border-blue-100 p-4 rounded-2xl shadow-xl flex items-center gap-3">
+                          {/* أيقونة أو صورة */}
+                          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                            👍
+                          </div>
+                          {/* النص */}
+                          <div>
+                            <h4 className="font-bold text-gray-800">
+                              Added to Cart!
+                            </h4>
+                            <p className="text-sm text-gray-500">
+                              Check your cart now.
+                            </p>
+                          </div>
+                        </div>
+                      ));
+                    }}
                     className="flex-1 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-8 rounded-2xl text-lg transition-all duration-300 shadow-xl hover:shadow-2xl flex items-center justify-center gap-3 group"
                   >
                     <ShoppingBag className="w-6 h-6 group-hover:scale-110 transition-transform" />

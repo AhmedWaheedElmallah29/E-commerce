@@ -10,12 +10,16 @@ import ProductDetails from "./Pages/ProductDetails";
 import CategoriesDetails from "./Pages/CategoriesDetails";
 import CartProvider from "./components/context/CartContext";
 import Cart from "./Pages/Cart";
+import ScrollToTop from "./components/ScrollToTop";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
     <div>
       <CartProvider>
         <NavBar />
+        <Toaster position="top-center" reverseOrder={false} />
+        <ScrollToTop />
         <Routes>
           <Route index element={<Home />} />
           <Route path="/products" element={<Products />} />
