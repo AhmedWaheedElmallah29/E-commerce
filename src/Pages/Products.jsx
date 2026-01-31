@@ -10,7 +10,6 @@ function Products() {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const quantity = 1;
 
   // States للفلاتر
   const [searchQuery, setSearchQuery] = useState("");
@@ -173,7 +172,7 @@ function Products() {
                         <button
                           onClick={(e) => {
                             e.preventDefault();
-                            addToCart(product, quantity);
+                            addToCart(product, 1);
                             toast.custom(() => (
                               <div className="bg-white border border-blue-100 p-4 rounded-2xl shadow-xl flex items-center gap-3">
                                 {/* أيقونة أو صورة */}

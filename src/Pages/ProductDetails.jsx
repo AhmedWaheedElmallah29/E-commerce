@@ -22,7 +22,6 @@ function ProductDetails() {
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [isFavorite, setIsFavorite] = useState(false);
   const { productID } = useParams();
   const { addToCart } = useContext(CartContext);
 
@@ -130,19 +129,6 @@ function ProductDetails() {
                       -{Math.round(product.discountPercentage)}%
                     </div>
                   )}
-                  <button
-                    onClick={() => setIsFavorite(!isFavorite)}
-                    className={`absolute top-4 left-4 p-3 rounded-2xl shadow-lg transition-all duration-300 ${
-                      isFavorite
-                        ? "bg-red-500 text-white scale-110"
-                        : "bg-white text-slate-600 hover:text-red-500"
-                    }`}
-                  >
-                    <Heart
-                      className="w-6 h-6"
-                      fill={isFavorite ? "currentColor" : "none"}
-                    />
-                  </button>
                 </div>
 
                 {/* Thumbnail Images */}

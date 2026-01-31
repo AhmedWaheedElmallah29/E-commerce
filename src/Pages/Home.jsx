@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
@@ -13,8 +13,12 @@ import {
   TrendingUp,
   Award,
 } from "lucide-react";
+import { CartContext } from "../components/context/CartContext"; // تأكد إن المسار صح
+import toast from "react-hot-toast";
+// import toast from "react-hot-toast"; // فعل السطر ده لو مركب المكتبة
 
 function Home() {
+  const { addToCart } = useContext(CartContext);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -25,14 +29,14 @@ function Home() {
       try {
         // Fetch featured products
         const productsRes = await fetch(
-          "https://dummyjson.com/products?limit=12"
+          "https://dummyjson.com/products?limit=8", // خليتها 8 عشان الشكل يبقى متناسق (4 فوق و 4 تحت)
         );
         const productsData = await productsRes.json();
         setFeaturedProducts(productsData.products);
 
         // Fetch categories
         const categoriesRes = await fetch(
-          "https://dummyjson.com/products/categories"
+          "https://dummyjson.com/products/categories",
         );
         const categoriesData = await categoriesRes.json();
 
@@ -41,7 +45,7 @@ function Home() {
           categoriesData.slice(0, 4).map(async (category) => {
             try {
               const catProductRes = await fetch(
-                `https://dummyjson.com/products/category/${category.slug}?limit=1`
+                `https://dummyjson.com/products/category/${category.slug}?limit=1`,
               );
               const catProductData = await catProductRes.json();
               return {
@@ -58,22 +62,19 @@ function Home() {
                   "from-pink-600/90 to-rose-600/90",
                   "from-green-600/90 to-emerald-600/90",
                   "from-purple-600/90 to-fuchsia-600/90",
-                ][categoriesData.indexOf(category)],
+                ][categoriesData.indexOf(category) % 4], // % 4 عشان لو الاندكس زاد ميديناش ايرور
               };
             } catch (err) {
               console.error("Error fetching category image:", err);
               return {
-                name:
-                  category.name.charAt(0).toUpperCase() +
-                  category.name.slice(1),
+                name: category.name,
                 slug: category.slug,
-                image:
-                  "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=400&fit=crop",
+                image: "https://via.placeholder.com/600x400",
                 count: "50+ Products",
                 linear: "from-slate-600/90 to-slate-600/90",
               };
             }
-          })
+          }),
         );
         setCategories(categoriesWithImages);
       } catch (err) {
@@ -120,9 +121,9 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-indigo-50/30">
-      {/* Hero Section - Modern Glassmorphism */}
+      {/* Hero Section */}
       <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-linear-to-br from-indigo-950 via-purple-900 to-slate-900">
-        {/* Animated Background Elements */}
+        {/* Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
           <div
@@ -135,14 +136,12 @@ function Home() {
           ></div>
         </div>
 
-        {/* Grid Pattern Overlay */}
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjAzIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-50"></div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* Left Content */}
             <div className="space-y-8 text-white">
-              {/* Badge */}
               <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-xl border border-white/20 px-5 py-3 rounded-2xl shadow-2xl">
                 <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
                 <Sparkles className="w-5 h-5 text-yellow-400" />
@@ -151,7 +150,6 @@ function Home() {
                 </span>
               </div>
 
-              {/* Main Heading */}
               <div className="space-y-4">
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-black leading-snug tracking-tight">
                   <span className="block text-white">Shop</span>
@@ -170,7 +168,6 @@ function Home() {
                 . Your one-stop destination for quality shopping.
               </p>
 
-              {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Link to="/products" className="w-full sm:w-auto">
                   <button className="group relative w-full sm:w-auto bg-linear-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:via-blue-500 hover:to-indigo-500 text-white px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl shadow-blue-600/50 hover:shadow-blue-500/70 hover:-translate-y-1">
@@ -187,7 +184,6 @@ function Home() {
                 </Link>
               </div>
 
-              {/* Stats */}
               <div className="grid grid-cols-3 gap-6 pt-8">
                 {[
                   { label: "Products", value: "10K+" },
@@ -206,10 +202,9 @@ function Home() {
               </div>
             </div>
 
-            {/* Right Visual - 3D Product Card */}
+            {/* Right Visual */}
             <div className="hidden lg:block relative">
               <div className="relative">
-                {/* Floating Cards */}
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="relative w-80 h-96">
                     {/* Card 1 */}
@@ -235,19 +230,9 @@ function Home() {
             </div>
           </div>
         </div>
-
-        {/* Wave Bottom */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 120" fill="none" className="w-full">
-            <path
-              d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,58.7C960,64,1056,64,1152,58.7C1248,53,1344,43,1392,37.3L1440,32L1440,120L0,120Z"
-              fill="rgb(248, 250, 252)"
-            />
-          </svg>
-        </div>
       </section>
 
-      {/* Features Section - Glassmorphism Cards */}
+      {/* Features Section */}
       <section className="py-20 -mt-1 bg-linear-to-b from-slate-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -276,7 +261,7 @@ function Home() {
         </div>
       </section>
 
-      {/* Categories Section - Bold Cards */}
+      {/* Categories Section */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -323,7 +308,7 @@ function Home() {
         </div>
       </section>
 
-      {/* Featured Products - Premium Cards */}
+      {/* Featured Products */}
       <section className="py-24 bg-linear-to-b from-white to-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -347,7 +332,7 @@ function Home() {
 
           {isLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[...Array(8)].map((_, i) => (
+              {[...Array(4)].map((_, i) => (
                 <div
                   key={i}
                   className="bg-slate-200 rounded-3xl h-96 animate-pulse"
@@ -357,6 +342,7 @@ function Home() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {featuredProducts.map((product) => (
+                // ✨ التعديل هنا: غلفنا الكارت بـ Link عشان يوديك للتفاصيل
                 <Link key={product.id} to={`/products/${product.id}`}>
                   <div className="group bg-white rounded-3xl border-2 border-slate-100 hover:border-blue-200 overflow-hidden transition-all duration-300 hover:shadow-2xl cursor-pointer h-full flex flex-col hover:-translate-y-2">
                     {/* Product Image */}
@@ -371,9 +357,6 @@ function Home() {
                           -{product.discountPercentage.toFixed(0)}%
                         </div>
                       )}
-                      <button className="absolute top-4 left-4 bg-white/95 hover:bg-white p-3 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg hover:scale-110">
-                        <Heart className="w-5 h-5 text-red-500" />
-                      </button>
                     </div>
 
                     {/* Product Info */}
@@ -386,7 +369,6 @@ function Home() {
                         {product.brand || "Premium Brand"}
                       </p>
 
-                      {/* Rating */}
                       <div className="flex items-center gap-2 mb-4">
                         <div className="flex">
                           {[...Array(5)].map((_, i) => (
@@ -406,7 +388,7 @@ function Home() {
                         </span>
                       </div>
 
-                      {/* Price */}
+                      {/* Price & Cart Button */}
                       <div className="mt-auto">
                         <div className="flex items-baseline gap-3 mb-4">
                           <span className="text-3xl font-black text-slate-900">
@@ -423,8 +405,31 @@ function Home() {
                           )}
                         </div>
 
-                        {/* Add to Cart Button */}
-                        <button className="w-full bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white py-3 rounded-2xl font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl group-hover:scale-105">
+                        {/* ✨ التعديل هنا: منعنا النقل للصفحة عند الضغط على الزرار */}
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            addToCart(product, 1);
+                            toast.custom(() => (
+                              <div className="bg-white border border-blue-100 p-4 rounded-2xl shadow-xl flex items-center gap-3">
+                                {/* أيقونة أو صورة */}
+                                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                                  👍
+                                </div>
+                                {/* النص */}
+                                <div>
+                                  <h4 className="font-bold text-gray-800">
+                                    Added to Cart!
+                                  </h4>
+                                  <p className="text-sm text-gray-500">
+                                    Check your cart now.
+                                  </p>
+                                </div>
+                              </div>
+                            ));
+                          }}
+                          className="w-full bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white py-3 rounded-2xl font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl group-hover:scale-105"
+                        >
                           <ShoppingBag size={18} />
                           Add to Cart
                         </button>
@@ -436,7 +441,6 @@ function Home() {
             </div>
           )}
 
-          {/* View All Button */}
           <div className="flex justify-center mt-16">
             <Link to="/products">
               <button className="group bg-linear-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-700 text-white px-12 py-5 rounded-2xl font-bold text-lg transition-all duration-300 shadow-2xl hover:shadow-3xl hover:-translate-y-1 flex items-center gap-3">
@@ -448,7 +452,7 @@ function Home() {
         </div>
       </section>
 
-      {/* CTA Section - linear Magic */}
+      {/* CTA Section */}
       <section className="relative py-32 overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-br from-indigo-950 via-purple-900 to-slate-900"></div>
         <div className="absolute inset-0">
