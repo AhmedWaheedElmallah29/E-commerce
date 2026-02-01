@@ -3,14 +3,18 @@ import { createContext, useEffect, useState } from "react";
 export const CartContext = createContext();
 
 function CartProvider({ children }) {
+  // 1. تهيئة السلة من الـ LocalStorage
   const [cart, setCart] = useState(() => {
     const storedCart = localStorage.getItem("cart");
     return storedCart ? JSON.parse(storedCart) : [];
   });
 
+  // 2. تحديث الـ LocalStorage كل ما السلة تتغير
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
+
+  // --- الدوال (Actions) ---
 
   function addToCart(product, quantity) {
     setCart((prevCart) => {
@@ -51,6 +55,12 @@ function CartProvider({ children }) {
     setCart((prevCart) => prevCart.filter((item) => item.id !== id));
   }
 
+  // 👇👇 الدالة الجديدة: تفريغ السلة بالكامل 👇👇
+  function clearCart() {
+    setCart([]); // 1. فضي الـ State
+    localStorage.removeItem("cart"); // 2. فضي الـ Storage
+  }
+
   return (
     <CartContext.Provider
       value={{
@@ -59,6 +69,7 @@ function CartProvider({ children }) {
         removeFromCart,
         increaseQuantity,
         decreaseQuantity,
+        clearCart,
       }}
     >
       {children}

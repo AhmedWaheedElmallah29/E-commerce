@@ -15,6 +15,7 @@ import { Toaster } from "react-hot-toast";
 import AuthProvider from "./components/context/AuthContext";
 import { Footer } from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Checkout from "./Pages/Checkout";
 
 function App() {
   return (
@@ -36,6 +37,14 @@ function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Signin />} />
             <Route path="/cart" element={<Cart />} />
+            <Route
+              path="/checkout"
+              element={
+                <ProtectedRoute>
+                  <Checkout />
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
           <Footer />
