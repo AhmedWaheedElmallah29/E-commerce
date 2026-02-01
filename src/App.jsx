@@ -14,6 +14,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import { Toaster } from "react-hot-toast";
 import AuthProvider from "./components/context/AuthContext";
 import { Footer } from "./components/Footer";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
