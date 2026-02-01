@@ -14,10 +14,12 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // 1. استدعاء useNavigate
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { UserPlus, Mail, Lock, User } from "lucide-react";
+import { useContext, useState } from "react"; // 2. استدعاء useContext
+import { AuthContext } from "@/components/context/AuthContext"; // 3. استدعاء الكونتكست
 
 const SignupSchema = Yup.object().shape({
   fullName: Yup.string()
@@ -38,6 +40,10 @@ const SignupSchema = Yup.object().shape({
 });
 
 export function SignupForm({ className, ...props }) {
+  const { signup } = useContext(AuthContext); // 4. هات دالة signup
+  const navigate = useNavigate(); // 5. جهز التنقل
+  const [error, setError] = useState(null); // 6. لعرض الأخطاء
+
   const formik = useFormik({
     initialValues: {
       fullName: "",
@@ -46,9 +52,23 @@ export function SignupForm({ className, ...props }) {
       confirmPassword: "",
     },
     validationSchema: SignupSchema,
-    onSubmit: async (values) => {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      console.log("Form submitted:", values);
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        setError(null);
+
+        // هنا بننادي على دالة الـ signup من الكونتكست
+        // وهي هتعمل "Auto Login" وتخزن التوكن
+        await signup(values.fullName, values.email, values.password);
+
+        console.log("Signup successful & Auto logged in!");
+
+        // مبروك! وديه الصفحة الرئيسية
+        navigate("/");
+      } catch (err) {
+        setError(err.message || "Failed to create account");
+      } finally {
+        setSubmitting(false);
+      }
     },
   });
 
@@ -56,7 +76,7 @@ export function SignupForm({ className, ...props }) {
     <div
       className={cn(
         "flex flex-col gap-6 w-full max-w-md mx-auto p-4",
-        className
+        className,
       )}
       {...props}
     >
@@ -74,6 +94,13 @@ export function SignupForm({ className, ...props }) {
         </CardHeader>
         <CardContent>
           <form onSubmit={formik.handleSubmit} className="space-y-4">
+            {/* عرض رسالة الخطأ لو حصلت */}
+            {error && (
+              <div className="p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm text-center font-medium animate-in fade-in">
+                ⚠️ {error}
+              </div>
+            )}
+
             <FieldGroup>
               {/* Full Name Field */}
               <Field>
@@ -93,7 +120,7 @@ export function SignupForm({ className, ...props }) {
                     "transition-all",
                     formik.touched.fullName && formik.errors.fullName
                       ? "border-red-500 focus-visible:ring-red-500"
-                      : ""
+                      : "",
                   )}
                 />
                 {formik.touched.fullName && formik.errors.fullName && (
@@ -122,7 +149,7 @@ export function SignupForm({ className, ...props }) {
                     "transition-all",
                     formik.touched.email && formik.errors.email
                       ? "border-red-500 focus-visible:ring-red-500"
-                      : ""
+                      : "",
                   )}
                 />
                 {formik.touched.email && formik.errors.email && (
@@ -155,7 +182,7 @@ export function SignupForm({ className, ...props }) {
                       "transition-all",
                       formik.touched.password && formik.errors.password
                         ? "border-red-500 focus-visible:ring-red-500"
-                        : ""
+                        : "",
                     )}
                   />
                   {formik.touched.password && formik.errors.password && (
@@ -164,8 +191,8 @@ export function SignupForm({ className, ...props }) {
                     </FieldDescription>
                   )}
                 </Field>
-                {/* confirmPassword Fields */}
 
+                {/* Confirm Password */}
                 <Field>
                   <FieldLabel
                     htmlFor="confirmPassword"
@@ -187,7 +214,7 @@ export function SignupForm({ className, ...props }) {
                       formik.touched.confirmPassword &&
                         formik.errors.confirmPassword
                         ? "border-red-500 focus-visible:ring-red-500"
-                        : ""
+                        : "",
                     )}
                   />
                   {formik.touched.confirmPassword &&
@@ -239,15 +266,7 @@ export function SignupForm({ className, ...props }) {
       </Card>
 
       <FieldDescription className="text-center text-xs text-muted-foreground">
-        By continuing, you agree to our{" "}
-        <a href="#" className="text-primary hover:underline font-medium">
-          Terms of Service
-        </a>{" "}
-        and{" "}
-        <a href="#" className="text-primary hover:underline font-medium">
-          Privacy Policy
-        </a>
-        .
+        By continuing, you agree to our Terms of Service and Privacy Policy.
       </FieldDescription>
     </div>
   );

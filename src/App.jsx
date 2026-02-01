@@ -12,26 +12,34 @@ import CartProvider from "./components/context/CartContext";
 import Cart from "./Pages/Cart";
 import ScrollToTop from "./components/ScrollToTop";
 import { Toaster } from "react-hot-toast";
+import AuthProvider from "./components/context/AuthContext";
+import { Footer } from "./components/Footer";
 
 function App() {
   return (
     <div>
-      <CartProvider>
-        <NavBar />
-        <Toaster position="top-center" reverseOrder={false} />
-        <ScrollToTop />
-        <Routes>
-          <Route index element={<Home />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/products/:productID" element={<ProductDetails />} />
-          <Route path="/categories" element={<Categories />} />
-          <Route path="/categories/:category" element={<CategoriesDetails />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Signin />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </CartProvider>
+      <AuthProvider>
+        <CartProvider>
+          <NavBar />
+          <Toaster position="top-center" reverseOrder={false} />
+          <ScrollToTop />
+          <Routes>
+            <Route index element={<Home />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/products/:productID" element={<ProductDetails />} />
+            <Route path="/categories" element={<Categories />} />
+            <Route
+              path="/categories/:category"
+              element={<CategoriesDetails />}
+            />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<Signin />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+          <Footer />
+        </CartProvider>
+      </AuthProvider>
     </div>
   );
 }
