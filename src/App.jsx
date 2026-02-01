@@ -35,6 +35,14 @@ function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Signin />} />
             <Route path="/cart" element={<Cart />} />
+            <Route
+              path="/checkout"
+              element={
+                <ProtectedRoute>
+                  <Checkout />
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
           <Footer />
