@@ -1,16 +1,66 @@
-# React + Vite
+# 🛍️ ShopNow - Modern E-Commerce Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Netlify Status](https://api.netlify.com/api/v1/badges/YOUR_NETLIFY_ID/deploy-status)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Mantine](https://img.shields.io/badge/Mantine-339AF0?style=for-the-badge&logo=mantine&logoColor=white)
 
-Currently, two official plugins are available:
+A fully functional, responsive e-commerce frontend application built with **React** and **Mantine UI**. This project simulates a complete shopping experience, from browsing products to a smart checkout process, utilizing **DummyJSON API** for data and **Local Storage** for persistence.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🔗 **Live Demo:** [Click Here to Visit ShopNow](https://1-e-commerce-project.netlify.app/)
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 📸 Screenshots
 
-## Expanding the ESLint configuration
+| Home Page                       | Product Details                       |
+| ------------------------------- | ------------------------------------- |
+| ![Home](./screenshots/home.png) | ![Product](./screenshots/product.png) |
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+| Smart Checkout                          | AllProducts                                   |
+| --------------------------------------- | --------------------------------------------- |
+| ![Checkout](./screenshots/checkout.png) | ![AllProducts](./screenshots/AllProducts.png) |
+
+---
+
+## ✨ Key Features
+
+- **🛒 Advanced Cart System:** Add items, adjust quantities, and real-time total calculation.
+- **⚡ Buy Now Logic:** Direct checkout flow for single items without affecting the main cart (using React Router state).
+- **🔐 Authentication Simulation:** Guest mode vs. User mode (Login/Signup UI).
+- **🛡️ Form Validation:** Robust checkout form validation using **Formik** & **Yup** (prevents invalid card numbers, phone formats, etc.).
+- **🎨 Modern UI/UX:** Built with **Mantine UI**, featuring a glassmorphism navbar, toast notifications, and responsive layout.
+- **🔍 Dynamic Routing:** Product details, categories, and protected routes for checkout.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend Framework:** React (Vite)
+- **Styling & UI:** Mantine UI, CSS Modules
+- **State Management:** React Context API
+- **Routing:** React Router DOM (v6)
+- **Forms & Validation:** Formik, Yup
+- **Notifications:** @mantine/notifications
+- **Icons:** Tabler Icons, React Icons, Lucide React
+- **API:** Axios (fetching data from DummyJSON)
+
+---
+
+## 🚀 How to Run Locally
+
+Clone the project and install dependencies to start the development server.
+
+```bash
+# 1. Clone the repository
+# 1. Clone the repository
+git clone https://github.com/AhmedWaheedElmallah29/E-commerce.git
+
+# 2. Navigate to project directory
+cd E-commerce
+
+# 3. Install dependencies
+npm install
+
+# 4. Start the server
+npm run dev
+```
