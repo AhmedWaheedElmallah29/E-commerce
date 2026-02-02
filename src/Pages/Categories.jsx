@@ -4,6 +4,11 @@ import Loader from "../components/ui/Loader";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
+/**
+ * Categories Page Component.
+ * Fetches and displays all available product categories.
+ * Each category card shows a dynamic image from one of its products.
+ */
 function Categories() {
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);

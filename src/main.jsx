@@ -1,3 +1,9 @@
+/**
+ * Entry point of the React application.
+ * Sets up the React Root, StrictMode, and global providers:
+ * - BrowserRouter for routing
+ * - MantineProvider for UI components styling
+ */
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";

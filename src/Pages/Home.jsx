@@ -17,6 +17,14 @@ import { CartContext } from "../components/context/CartContext";
 import { notifications } from "@mantine/notifications";
 import { IconThumbUp } from "@tabler/icons-react";
 
+/**
+ * Home Page Component.
+ * Displays:
+ * - Hero section with animations.
+ * - Featured products (fetched from API).
+ * - Product categories with dynamic images.
+ * - Feature highlights (Free Shipping, etc.).
+ */
 function Home() {
   const { addToCart } = useContext(CartContext);
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -29,7 +37,7 @@ function Home() {
       try {
         // Fetch featured products
         const productsRes = await fetch(
-          "https://dummyjson.com/products?limit=8", // خليتها 8 عشان الشكل يبقى متناسق (4 فوق و 4 تحت)
+          "https://dummyjson.com/products?limit=8",
         );
         const productsData = await productsRes.json();
         setFeaturedProducts(productsData.products);
@@ -62,7 +70,7 @@ function Home() {
                   "from-pink-600/90 to-rose-600/90",
                   "from-green-600/90 to-emerald-600/90",
                   "from-purple-600/90 to-fuchsia-600/90",
-                ][categoriesData.indexOf(category) % 4], // % 4 عشان لو الاندكس زاد ميديناش ايرور
+                ][categoriesData.indexOf(category) % 4],
               };
             } catch (err) {
               console.error("Error fetching category image:", err);
@@ -342,7 +350,6 @@ function Home() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {featuredProducts.map((product) => (
-                // ✨ التعديل هنا: غلفنا الكارت بـ Link عشان يوديك للتفاصيل
                 <Link key={product.id} to={`/products/${product.id}`}>
                   <div className="group bg-white rounded-3xl border-2 border-slate-100 hover:border-blue-200 overflow-hidden transition-all duration-300 hover:shadow-2xl cursor-pointer h-full flex flex-col hover:-translate-y-2">
                     {/* Product Image */}
@@ -405,7 +412,7 @@ function Home() {
                           )}
                         </div>
 
-                        {/* ✨ التعديل هنا: منعنا النقل للصفحة عند الضغط على الزرار */}
+                        {/* Add to Cart Button */}
                         <button
                           onClick={(e) => {
                             e.preventDefault();
@@ -413,10 +420,10 @@ function Home() {
                             notifications.show({
                               title: "Added to Cart!",
                               message: "Check your cart now.",
-                              color: "blue", // نفس اللون الأزرق اللي كنت عامله
-                              icon: <IconThumbUp size={18} />, // بديل احترافي لـ 👍
-                              radius: "md", // عشان الحواف المدورة (rounded)
-                              withBorder: true, // عشان يعمل border خفيف زي القديم
+                              color: "blue",
+                              icon: <IconThumbUp size={18} />,
+                              radius: "md",
+                              withBorder: true,
                               autoClose: 3000,
                             });
                           }}

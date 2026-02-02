@@ -1,11 +1,11 @@
 import Loader from "@/components/ui/Loader";
 import axios from "axios";
 import { Package, RefreshCw } from "lucide-react";
-import { useContext, useEffect, useState } from "react"; // 1. ضفنا useContext
+import { useContext, useEffect, useState } from "react";
 import { FaCartPlus, FaStar } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
-import { CartContext } from "../components/context/CartContext"; // 2. استيراد الكونتكست
-import { notifications } from "@mantine/notifications"; // 3. استيراد الإشعارات
+import { CartContext } from "../components/context/CartContext";
+import { notifications } from "@mantine/notifications";
 import { IconCheck } from "@tabler/icons-react";
 
 function CategoriesDetails() {
@@ -14,7 +14,6 @@ function CategoriesDetails() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // 4. استخدام دالة الإضافة من الكونتكست
   const { addToCart } = useContext(CartContext);
 
   async function getProducts() {
@@ -35,19 +34,18 @@ function CategoriesDetails() {
 
   useEffect(() => {
     getProducts();
-  }, [category]); // يفضل إضافة category للـ dependencies
+  }, [category]);
 
   const calculateOriginalPrice = (price, discountPercentage) => {
     return (price / (1 - discountPercentage / 100)).toFixed(2);
   };
 
-  // 👇 5. دالة التعامل مع إضافة المنتج (UX Logic)
+  // Handle Add to Cart with UX feedback
   const handleAddToCart = (e, product) => {
-    e.preventDefault(); // 🛑 أهم سطر: بيمنع اللينك إنه يفتح صفحة المنتج
+    e.preventDefault(); // Prevent navigation to product details
 
-    addToCart(product, 1); // إضافة للسلة
+    addToCart(product, 1);
 
-    // إظهار إشعار النجاح
     notifications.show({
       title: "Added to Cart",
       message: `${product.title} has been added!`,
@@ -109,7 +107,7 @@ function CategoriesDetails() {
           <div key={product.id} className="group block h-full">
             <Link to={`/products/${product.id}`}>
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 h-full flex flex-col overflow-hidden cursor-pointer">
-                {/* ... الجزء الخاص بالصورة زي ما هو ... */}
+                {/* Product Image Container */}
                 <div className="relative w-full h-48 bg-gray-50 flex items-center justify-center p-4">
                   {product.discountPercentage >= 1 && (
                     <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md z-10">
@@ -125,7 +123,7 @@ function CategoriesDetails() {
                 </div>
 
                 <div className="p-4 flex flex-col grow">
-                  {/* ... التقييم والعنوان والوصف زي ما هو ... */}
+                  {/* Rating and Reviews */}
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex items-center text-yellow-400 text-xs font-bold">
                       <FaStar className="mr-1" />
@@ -160,7 +158,7 @@ function CategoriesDetails() {
                       )}
                     </div>
 
-                    {/* 👇 6. ربط الزرار بالدالة الجديدة */}
+                    {/* Add to Cart Button */}
                     <button
                       className="w-full border border-blue-600 text-blue-600 font-bold py-2 rounded-full hover:bg-blue-600 hover:text-white transition-colors duration-300 flex items-center justify-center gap-2 text-sm z-20 relative"
                       onClick={(e) => handleAddToCart(e, product)}

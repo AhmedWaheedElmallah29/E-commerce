@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom"; // 1. استيراد useNavigate
+import { Link, useParams, useNavigate } from "react-router-dom";
 import Loader from "../components/ui/Loader";
 import {
   Star,
@@ -10,7 +10,7 @@ import {
   RotateCcw,
   Package,
   RefreshCw,
-  Zap, // أيقونة للسرعة
+  Zap,
 } from "lucide-react";
 import { CartContext } from "../components/context/CartContext";
 import { notifications } from "@mantine/notifications";
@@ -24,7 +24,7 @@ function ProductDetails() {
   const [quantity, setQuantity] = useState(1);
 
   const { productID } = useParams();
-  const navigate = useNavigate(); // 2. تفعيل الهوك
+  const navigate = useNavigate();
   const { addToCart } = useContext(CartContext);
 
   const getProduct = async () => {
@@ -46,7 +46,8 @@ function ProductDetails() {
     getProduct();
   }, [productID]);
 
-  // 👇 3. دالة الشراء الفوري
+  // Handle "Buy Now" direct checkout flow
+  // Handle "Buy Now" direct checkout flow
   const handleBuyNow = () => {
     navigate("/checkout", {
       state: {
@@ -285,13 +286,12 @@ function ProductDetails() {
                     Add to Cart
                   </button>
 
-                  {/* 👇👇 زرار Buy Now المربوط بالدالة 👇👇 */}
+                  {/* Buy Now Button */}
                   <button
                     onClick={handleBuyNow}
                     className="flex-1 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-8 rounded-2xl text-lg transition-all duration-300 shadow-xl hover:shadow-2xl flex items-center justify-center gap-2"
                   >
-                    <Zap className="w-6 h-6" />{" "}
-                    {/* غيرت الأيقونة لـ Zap (كهرباء) دليل السرعة */}
+                    <Zap className="w-6 h-6" />
                     Buy Now
                   </button>
                 </div>

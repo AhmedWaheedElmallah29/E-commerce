@@ -4,18 +4,22 @@ import { Link } from "react-router-dom";
 import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag } from "lucide-react";
 import { Button } from "@mantine/core";
 
+/**
+ * Cart Page Component.
+ * Displays user's shopping cart items.
+ * Allows users to increase/decrease quantity or remove items.
+ * Shows price summary and checkout button.
+ */
 function Cart() {
-  // هنجيب الداتا والوظائف من الصندوق
-  const { cart, removeFromCart, increaseQuantity, decreaseQuantity } =
-    useContext(CartContext);
+  // Access cart data and actions from CartContext
 
-  // حساب الإجمالي
+  // Calculate Total Price
   const totalPrice = cart.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0,
   );
 
-  // 1. حالة لو العربة فاضية
+  // 1. Empty Cart State
   if (cart.length === 0) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-center px-4">
@@ -39,7 +43,7 @@ function Cart() {
     );
   }
 
-  // 2. حالة لو فيه منتجات
+  // 2. Cart Items Rendering
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -51,14 +55,14 @@ function Cart() {
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* قسم المنتجات (Left Side) */}
+          {/* Product List Section */}
           <div className="lg:col-span-2 space-y-4">
             {cart.map((item) => (
               <div
                 key={item.id}
                 className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex gap-4 sm:gap-6 items-center hover:shadow-md transition-shadow"
               >
-                {/* صورة المنتج */}
+                {/* Product Image */}
                 <div className="w-24 h-24 bg-gray-100 rounded-xl overflow-hidden shrink-0">
                   <img
                     src={item.thumbnail || item.images[0]}
@@ -67,7 +71,7 @@ function Cart() {
                   />
                 </div>
 
-                {/* تفاصيل المنتج */}
+                {/* Product Details */}
                 <div className="flex-1">
                   <h3 className="text-lg font-bold text-gray-900 line-clamp-1">
                     {item.title}
@@ -81,7 +85,7 @@ function Cart() {
                   </div>
                 </div>
 
-                {/* أزرار التحكم في الكمية */}
+                {/* Quantity Controls */}
                 <div className="flex flex-col items-end gap-3">
                   <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-1 border border-gray-200">
                     <button
@@ -101,7 +105,7 @@ function Cart() {
                     </button>
                   </div>
 
-                  {/* زرار الحذف */}
+                  {/* Remove Button */}
                   <button
                     onClick={() => removeFromCart(item.id)}
                     className="flex items-center gap-1 text-red-500 text-sm hover:text-red-700 font-medium transition-colors"
@@ -114,7 +118,7 @@ function Cart() {
             ))}
           </div>
 
-          {/* ملخص الفاتورة (Right Side) */}
+          {/* Order Summary (Right Side) */}
           <div className="lg:col-span-1">
             <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 sticky top-4">
               <h2 className="text-xl font-bold text-gray-900 mb-6">

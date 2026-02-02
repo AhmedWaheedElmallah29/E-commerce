@@ -34,7 +34,7 @@ export function NavBar() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
   const navigate = useNavigate();
-  const location = useLocation(); // عشان نعرف احنا في انهي صفحة ونلون اللينك
+  const location = useLocation();
 
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -49,16 +49,16 @@ export function NavBar() {
     });
   };
 
-  // ستايل اللينكات عشان منكرروش الكود
+  // Determine link style based on active state
   const getLinkStyle = (path) => ({
     textDecoration: "none",
-    color: location.pathname === path ? "#228be6" : "#495057", // لو احنا في الصفحة دي لونها أزرق
+    color: location.pathname === path ? "#228be6" : "#495057",
     fontWeight: 600,
     fontSize: rem(15),
     padding: `${rem(8)} ${rem(12)}`,
     borderRadius: rem(8),
     transition: "all 0.2s ease",
-    backgroundColor: location.pathname === path ? "#e7f5ff" : "transparent", // خلفية خفيفة للينك النشط
+    backgroundColor: location.pathname === path ? "#e7f5ff" : "transparent",
   });
 
   return (
@@ -68,15 +68,15 @@ export function NavBar() {
         position: "sticky",
         top: 0,
         zIndex: 100,
-        backgroundColor: "rgba(255, 255, 255, 0.8)", // شفافية
-        backdropFilter: "blur(12px)", // تأثير الزجاج
+        backgroundColor: "rgba(255, 255, 255, 0.8)",
+        backdropFilter: "blur(12px)",
         borderBottom: "1px solid rgba(0,0,0,0.05)",
-        height: rem(70), // ارتفاع ثابت ومريح
+        height: rem(70),
       }}
     >
       <Container size="lg" h="100%">
         <Group justify="space-between" h="100%">
-          {/* 1. Logo Section (Modern Look) */}
+          {/* Logo Section */}
           <Link to="/" style={{ textDecoration: "none" }}>
             <Group gap={8}>
               <ThemeIcon
@@ -99,7 +99,7 @@ export function NavBar() {
             </Group>
           </Link>
 
-          {/* 2. Desktop Navigation (Pills Style) */}
+          {/* Desktop Navigation */}
           <Group gap="xs" visibleFrom="md">
             <Link to="/" style={getLinkStyle("/")}>
               Home
@@ -112,9 +112,9 @@ export function NavBar() {
             </Link>
           </Group>
 
-          {/* 3. Right Side Actions */}
+          {/* Right Side Actions */}
           <Group gap="sm" visibleFrom="sm">
-            {/* Cart Icon */}
+            {/* Cart Indicator */}
             <Link to="/cart" style={{ textDecoration: "none" }}>
               <Indicator
                 label={totalItems}
@@ -137,7 +137,7 @@ export function NavBar() {
               </Indicator>
             </Link>
 
-            {/* Auth Logic */}
+            {/* User Dropdown Menu */}
             {user ? (
               <Menu
                 shadow="lg"
@@ -169,7 +169,7 @@ export function NavBar() {
                         {!user.image && user.firstName?.charAt(0)}
                       </Avatar>
                       <div style={{ marginRight: 10 }}>
-                        {/* اسم اليوزر يظهر بس لو الشاشة كبيرة شوية */}
+                        {/* Show user name on larger screens */}
                         <Text size="sm" fw={600} lh={1} visibleFrom="lg">
                           {user.firstName}
                         </Text>
@@ -211,7 +211,7 @@ export function NavBar() {
                 </Menu.Dropdown>
               </Menu>
             ) : (
-              // Guest State
+              // Guest Actions
               <Group gap="xs">
                 <Link to="/login">
                   <Button variant="subtle" color="gray" radius="xl">
@@ -232,7 +232,7 @@ export function NavBar() {
             )}
           </Group>
 
-          {/* Mobile Actions */}
+          {/* Mobile Navigation Controls */}
           <Group hiddenFrom="sm" gap="xs">
             <Link to="/cart" style={{ textDecoration: "none" }}>
               <Indicator
@@ -252,7 +252,7 @@ export function NavBar() {
         </Group>
       </Container>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer Menu */}
       <Drawer
         opened={drawerOpened}
         onClose={closeDrawer}

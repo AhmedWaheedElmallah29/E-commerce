@@ -44,7 +44,7 @@ export function Footer() {
             gap: "40px",
           }}
         >
-          {/* 1. Brand & Description */}
+          {/* Brand & Description */}
           <div style={{ maxWidth: "320px" }}>
             <Group gap="xs" mb="md">
               <ThemeIcon
@@ -70,7 +70,7 @@ export function Footer() {
             </Text>
           </div>
 
-          {/* 2. Quick Links */}
+          {/* Quick Links */}
           <Stack gap="sm">
             <Text fw={700} size="lg" mb={5}>
               Shop
@@ -114,7 +114,7 @@ export function Footer() {
               Connect with me
             </Text>
             <Group gap="md">
-              {/* FaceBook */}
+              {/* Social Media Links */}
               <ActionIcon
                 component="a"
                 href="https://www.facebook.com/Ahmedwaheedelmallah/"
@@ -127,7 +127,7 @@ export function Footer() {
                 <IconBrandFacebook size={20} stroke={1.5} />
               </ActionIcon>
 
-              {/* GitHub */}
+
               <ActionIcon
                 component="a"
                 href="https://github.com/AhmedWaheedElmallah29"
@@ -140,7 +140,7 @@ export function Footer() {
                 <IconBrandGithub size={20} stroke={1.5} />
               </ActionIcon>
 
-              {/* Email */}
+
               <ActionIcon
                 component="a"
                 href="mailto:ahmedwaheedelmallah@gmail.com"
@@ -157,14 +157,14 @@ export function Footer() {
 
         <Divider my="xl" />
 
-        {/* Bottom Section */}
+        {/* Bottom Copyright Section */}
         <Group justify="space-between">
           <Text c="dimmed" size="xs">
             © {new Date().getFullYear()} Ahmed Elmallah. All rights reserved.
           </Text>
 
           <Group gap="xs" visibleFrom="xs">
-            {/* لينكات وهمية للشكل بس */}
+            {/* Legal Links (Visual Only) */}
             <Text size="xs" c="dimmed" style={{ cursor: "pointer" }}>
               Privacy Policy
             </Text>

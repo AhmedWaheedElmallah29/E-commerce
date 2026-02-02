@@ -1,28 +1,36 @@
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
-import { ShoppingBag, Filter, Search } from "lucide-react"; // شيلنا الأيقونات اللي مش مستخدمة
+import { ShoppingBag, Filter, Search } from "lucide-react";
 import Loader from "../components/ui/Loader";
 import { CartContext } from "../components/context/CartContext";
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconThumbUp, IconX } from "@tabler/icons-react";
 
+/**
+ * Products Page Component.
+ * Allows users to:
+ * - View a list of products.
+ * - Search products by title.
+ * - Filter by category and price.
+ * - Add products to cart.
+ */
 function Products() {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // States للفلاتر
+  // Filter States
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [maxPrice, setMaxPrice] = useState(2000);
 
   const { addToCart } = useContext(CartContext);
 
-  // استخراج الأقسام
+  // Extract unique categories from products
   const categories = ["all", ...new Set(products.map((p) => p.category))];
 
-  // معادلة الفلترة الشاملة
+  // Combined Filtering Logic
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.title
       .toLowerCase()
@@ -47,6 +55,9 @@ function Products() {
     }
   };
 
+  /**
+   * Fetches products from API on mount.
+   */
   useEffect(() => {
     getProducts();
   }, []);
@@ -82,20 +93,18 @@ function Products() {
 
           {/* Filters Area */}
           <div className="bg-white/5 backdrop-blur-sm p-6 rounded-3xl border border-white/10 flex flex-col lg:flex-row gap-8">
-            {/* 1. Category Filter Buttons (تم التعديل هنا للسكرول العرضي) */}
+            {/* 1. Category Filter Buttons */}
             <div className="flex-1 overflow-hidden">
               <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
                 <Filter size={16} /> Categories
               </h3>
 
-              {/* 👇👇 هنا التغيير المهم 👇👇 */}
-              {/* استخدمنا overflow-x-auto عشان السكرول، وشيلنا flex-wrap */}
+              {/* Horizontal Scrollable Categories */}
               <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide mask-image-linear-gradient-to-r">
                 {categories.map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
-                    // ضفنا whitespace-nowrap عشان الكلام ميتكسرش
                     className={`px-4 py-2 rounded-xl text-sm font-bold capitalize whitespace-nowrap shrink-0 transition-all ${
                       selectedCategory === cat
                         ? "bg-blue-600 text-white shadow-lg scale-105"
@@ -177,10 +186,10 @@ function Products() {
                             notifications.show({
                               title: "Added to Cart!",
                               message: "Check your cart now.",
-                              color: "blue", // نفس اللون الأزرق اللي كنت عامله
-                              icon: <IconThumbUp size={18} />, // بديل احترافي لـ 👍
-                              radius: "md", // عشان الحواف المدورة (rounded)
-                              withBorder: true, // عشان يعمل border خفيف زي القديم
+                              color: "blue",
+                              icon: <IconThumbUp size={18} />,
+                              radius: "md",
+                              withBorder: true,
                               autoClose: 3000,
                             });
                           }}

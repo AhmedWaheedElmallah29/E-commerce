@@ -15,28 +15,26 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useContext, useState } from "react";
 import { CartContext } from "../components/context/CartContext";
-import { useNavigate, useLocation } from "react-router-dom"; // 1. استيراد useLocation
+import { useNavigate, useLocation } from "react-router-dom";
 import { IconCreditCard, IconTruck, IconCheck } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 
 export default function Checkout() {
   const { cart, clearCart } = useContext(CartContext);
   const navigate = useNavigate();
-  const location = useLocation(); // 2. تفعيل الهوك
+  const location = useLocation();
   const [loading, setLoading] = useState(false);
 
-  // 3. استقبال المنتج المبعوث (لو موجود)
-  // لو جاي من Buy Now هيكون فيه داتا، لو جاي من السلة هيكون null
+  // Determine if this is a direct buy purchase or a cart checkout
   const directPurchaseItem = location.state?.product;
   const directQuantity = location.state?.quantity || 1;
 
-  // 4. تحديد إحنا هنحاسب على إيه؟
-  // لو فيه شراء مباشر، القائمة فيها عنصر واحد. لو مفيش، يبقى القائمة هي السلة
+  // Set the items to checkout: either the single direct item or the entire cart
   const checkoutItems = directPurchaseItem
     ? [{ ...directPurchaseItem, quantity: directQuantity }]
     : cart;
 
-  // 5. حساب الإجمالي بناءً على القائمة المختارة
+  // Calculate Total Price
   const total = checkoutItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0,
@@ -76,12 +74,12 @@ export default function Checkout() {
       setTimeout(() => {
         setLoading(false);
 
-        // 6. اللوجيك الذكي للتنظيف 🧹
-        // لو بنحاسب على السلة كلها (مش شراء مباشر) -> فضي السلة
+        // Post-checkout cleanup logic:
+        // If checking out from cart -> clear the cart.
+        // If direct purchase -> do not clear the cart.
         if (!directPurchaseItem) {
           clearCart();
         }
-        // لو شراء مباشر -> متقربش للسلة القديمة (سيبها زي ما هي)
 
         notifications.show({
           title: "Order Successful! 🎉",
@@ -98,7 +96,7 @@ export default function Checkout() {
     },
   });
 
-  // شرط الإظهار: لو السلة فاضية "وكمان" مفيش شراء مباشر.. يبقى ارجع
+  // Redirect if both cart is empty and no direct purchase item
   if (cart.length === 0 && !directPurchaseItem) {
     return (
       <Container size="lg" py="xl" ta="center">
@@ -119,15 +117,14 @@ export default function Checkout() {
       />
 
       <Title order={2} mb="lg">
-        {/* تغيير العنوان حسب الحالة */}
+        {/* Dynamic Title */}
         {directPurchaseItem ? "Checkout (Buy Now)" : "Checkout"}
       </Title>
 
       <Grid gutter="xl">
         <Grid.Col span={{ base: 12, md: 8 }}>
           <form onSubmit={formik.handleSubmit}>
-            {/* ... (نفس كود الفورم بالظبط بدون تغيير) ... */}
-            {/* اختصاراً للكود هنا، سيب الفورم زي ما كانت */}
+            {/* Shipping Form */}
             <Stack gap="lg">
               <Paper withBorder p="md" radius="md">
                 <Group mb="md">
@@ -208,7 +205,7 @@ export default function Checkout() {
           </form>
         </Grid.Col>
 
-        {/* ملخص الطلب */}
+        {/* Order Summary */}
         <Grid.Col span={{ base: 12, md: 4 }}>
           <Paper
             withBorder
@@ -223,7 +220,7 @@ export default function Checkout() {
             </Text>
 
             <Stack gap="sm">
-              {/* 7. هنا بنلف على القائمة المتحدد سواء كارت أو منتج واحد */}
+              {/* List Checkout Items */}
               {checkoutItems.map((item) => (
                 <Group key={item.id} justify="space-between" align="flex-start">
                   <div style={{ flex: 1 }}>

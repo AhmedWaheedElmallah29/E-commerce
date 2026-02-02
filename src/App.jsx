@@ -1,3 +1,12 @@
+/**
+ * Main Application Component.
+ * Handles the main layout structure including:
+ * - Navigation Bar
+ * - Footer
+ * - Routing configuration for all pages
+ * - Global providers (AuthProvider, CartProvider)
+ * - Toast notifications
+ */
 import { Route, Routes } from "react-router-dom";
 import { NavBar } from "./components/NavBar";
 import Home from "./Pages/Home";

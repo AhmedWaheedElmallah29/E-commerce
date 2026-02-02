@@ -3,18 +3,18 @@ import { createContext, useEffect, useState } from "react";
 export const CartContext = createContext();
 
 function CartProvider({ children }) {
-  // 1. تهيئة السلة من الـ LocalStorage
+  // Initialize cart from LocalStorage to persist data
   const [cart, setCart] = useState(() => {
     const storedCart = localStorage.getItem("cart");
     return storedCart ? JSON.parse(storedCart) : [];
   });
 
-  // 2. تحديث الـ LocalStorage كل ما السلة تتغير
+  // Sync cart with LocalStorage on change
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  // --- الدوال (Actions) ---
+  // --- Cart Actions ---
 
   function addToCart(product, quantity) {
     setCart((prevCart) => {
@@ -55,10 +55,10 @@ function CartProvider({ children }) {
     setCart((prevCart) => prevCart.filter((item) => item.id !== id));
   }
 
-  // 👇👇 الدالة الجديدة: تفريغ السلة بالكامل 👇👇
+  // Clears all items from the cart
   function clearCart() {
-    setCart([]); // 1. فضي الـ State
-    localStorage.removeItem("cart"); // 2. فضي الـ Storage
+    setCart([]);
+    localStorage.removeItem("cart");
   }
 
   return (
