@@ -11,11 +11,12 @@ import CategoriesDetails from "./Pages/CategoriesDetails";
 import CartProvider from "./components/context/CartContext";
 import Cart from "./Pages/Cart";
 import ScrollToTop from "./components/ScrollToTop";
-import { Toaster } from "react-hot-toast";
 import AuthProvider from "./components/context/AuthContext";
 import { Footer } from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Checkout from "./Pages/Checkout";
+import { Notifications } from "@mantine/notifications";
+import "@mantine/notifications/styles.css";
 
 function App() {
   return (
@@ -23,7 +24,7 @@ function App() {
       <AuthProvider>
         <CartProvider>
           <NavBar />
-          <Toaster position="top-center" reverseOrder={false} />
+          <Notifications position="top-center" zIndex={1000} />
           <ScrollToTop />
           <Routes>
             <Route index element={<Home />} />

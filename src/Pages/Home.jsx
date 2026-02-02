@@ -13,9 +13,9 @@ import {
   TrendingUp,
   Award,
 } from "lucide-react";
-import { CartContext } from "../components/context/CartContext"; // تأكد إن المسار صح
-import toast from "react-hot-toast";
-// import toast from "react-hot-toast"; // فعل السطر ده لو مركب المكتبة
+import { CartContext } from "../components/context/CartContext";
+import { notifications } from "@mantine/notifications";
+import { IconThumbUp } from "@tabler/icons-react";
 
 function Home() {
   const { addToCart } = useContext(CartContext);
@@ -410,23 +410,15 @@ function Home() {
                           onClick={(e) => {
                             e.preventDefault();
                             addToCart(product, 1);
-                            toast.custom(() => (
-                              <div className="bg-white border border-blue-100 p-4 rounded-2xl shadow-xl flex items-center gap-3">
-                                {/* أيقونة أو صورة */}
-                                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
-                                  👍
-                                </div>
-                                {/* النص */}
-                                <div>
-                                  <h4 className="font-bold text-gray-800">
-                                    Added to Cart!
-                                  </h4>
-                                  <p className="text-sm text-gray-500">
-                                    Check your cart now.
-                                  </p>
-                                </div>
-                              </div>
-                            ));
+                            notifications.show({
+                              title: "Added to Cart!",
+                              message: "Check your cart now.",
+                              color: "blue", // نفس اللون الأزرق اللي كنت عامله
+                              icon: <IconThumbUp size={18} />, // بديل احترافي لـ 👍
+                              radius: "md", // عشان الحواف المدورة (rounded)
+                              withBorder: true, // عشان يعمل border خفيف زي القديم
+                              autoClose: 3000,
+                            });
                           }}
                           className="w-full bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white py-3 rounded-2xl font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl group-hover:scale-105"
                         >

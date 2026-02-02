@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { CartContext } from "../components/context/CartContext";
 import { Link } from "react-router-dom";
 import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag } from "lucide-react";
+import { Button } from "@mantine/core";
 
 function Cart() {
   // هنجيب الداتا والوظائف من الصندوق
@@ -140,13 +141,15 @@ function Cart() {
                 </div>
               </div>
 
-              <button className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-700 hover:shadow-lg transition-all transform hover:-translate-y-1">
-                Checkout Now
-              </button>
+              <Link to="/checkout" style={{ width: "100%" }}>
+                <Button fullWidth size="lg">
+                  Checkout Now
+                </Button>
+              </Link>
 
               <Link
                 to="/products"
-                className="block text-center mt-4 text-gray-500 hover:text-gray-800 text-sm flex items-center justify-center gap-2"
+                className="text-center mt-4 text-gray-500 hover:text-gray-800 text-sm flex items-center justify-center gap-2"
               >
                 <ArrowLeft size={16} />
                 Continue Shopping

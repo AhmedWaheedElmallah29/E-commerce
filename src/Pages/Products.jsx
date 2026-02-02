@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 import { ShoppingBag, Filter, Search } from "lucide-react"; // شيلنا الأيقونات اللي مش مستخدمة
 import Loader from "../components/ui/Loader";
 import { CartContext } from "../components/context/CartContext";
-import toast from "react-hot-toast";
+import { notifications } from "@mantine/notifications";
+import { IconCheck, IconThumbUp, IconX } from "@tabler/icons-react";
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -173,23 +174,15 @@ function Products() {
                           onClick={(e) => {
                             e.preventDefault();
                             addToCart(product, 1);
-                            toast.custom(() => (
-                              <div className="bg-white border border-blue-100 p-4 rounded-2xl shadow-xl flex items-center gap-3">
-                                {/* أيقونة أو صورة */}
-                                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
-                                  👍
-                                </div>
-                                {/* النص */}
-                                <div>
-                                  <h4 className="font-bold text-gray-800">
-                                    Added to Cart!
-                                  </h4>
-                                  <p className="text-sm text-gray-500">
-                                    Check your cart now.
-                                  </p>
-                                </div>
-                              </div>
-                            ));
+                            notifications.show({
+                              title: "Added to Cart!",
+                              message: "Check your cart now.",
+                              color: "blue", // نفس اللون الأزرق اللي كنت عامله
+                              icon: <IconThumbUp size={18} />, // بديل احترافي لـ 👍
+                              radius: "md", // عشان الحواف المدورة (rounded)
+                              withBorder: true, // عشان يعمل border خفيف زي القديم
+                              autoClose: 3000,
+                            });
                           }}
                           className="bg-blue-100 hover:bg-blue-600 text-blue-600 hover:text-white p-3 rounded-xl transition-all"
                         >
