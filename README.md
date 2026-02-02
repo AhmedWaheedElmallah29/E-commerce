@@ -1,6 +1,6 @@
 # 🛍️ ShopNow - Modern E-Commerce Application
 
-![Netlify Status](https://api.netlify.com/api/v1/badges/YOUR_NETLIFY_ID/deploy-status)
+![Netlify Status](https://api.netlify.com/api/v1/badges/208d64f7-27b9-474f-b82b-532a70530536/deploy-status)
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![Mantine](https://img.shields.io/badge/Mantine-339AF0?style=for-the-badge&logo=mantine&logoColor=white)
 
@@ -51,7 +51,6 @@ A fully functional, responsive e-commerce frontend application built with **Reac
 Clone the project and install dependencies to start the development server.
 
 ```bash
-# 1. Clone the repository
 # 1. Clone the repository
 git clone https://github.com/AhmedWaheedElmallah29/E-commerce.git
 
