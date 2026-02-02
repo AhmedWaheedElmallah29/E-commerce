@@ -15,17 +15,32 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useContext, useState } from "react";
 import { CartContext } from "../components/context/CartContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; // 1. استيراد useLocation
 import { IconCreditCard, IconTruck, IconCheck } from "@tabler/icons-react";
-import { notifications } from "@mantine/notifications"; // ✅ استيراد الإشعارات
+import { notifications } from "@mantine/notifications";
 
 export default function Checkout() {
   const { cart, clearCart } = useContext(CartContext);
   const navigate = useNavigate();
+  const location = useLocation(); // 2. تفعيل الهوك
   const [loading, setLoading] = useState(false);
 
-  // حساب إجمالي السلة
-  const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  // 3. استقبال المنتج المبعوث (لو موجود)
+  // لو جاي من Buy Now هيكون فيه داتا، لو جاي من السلة هيكون null
+  const directPurchaseItem = location.state?.product;
+  const directQuantity = location.state?.quantity || 1;
+
+  // 4. تحديد إحنا هنحاسب على إيه؟
+  // لو فيه شراء مباشر، القائمة فيها عنصر واحد. لو مفيش، يبقى القائمة هي السلة
+  const checkoutItems = directPurchaseItem
+    ? [{ ...directPurchaseItem, quantity: directQuantity }]
+    : cart;
+
+  // 5. حساب الإجمالي بناءً على القائمة المختارة
+  const total = checkoutItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0,
+  );
 
   const formik = useFormik({
     initialValues: {
@@ -37,13 +52,23 @@ export default function Checkout() {
       cvv: "",
     },
     validationSchema: Yup.object({
-      address: Yup.string().required("Address is required"),
+      address: Yup.string().min(5).required("Address is required"),
       city: Yup.string().required("City is required"),
-      phone: Yup.string().required("Phone is required"),
+      phone: Yup.string()
+        .matches(/^[0-9]+$/)
+        .min(10)
+        .required("Phone is required"),
       cardNumber: Yup.string()
-        .min(16, "Invalid card number")
-        .required("Card details are required"),
-      cvv: Yup.string().min(3, "Invalid CVV").required("CVV is required"),
+        .matches(/^[0-9]+$/)
+        .length(16)
+        .required("Card details required"),
+      expiry: Yup.string()
+        .matches(/^(0[1-9]|1[0-2])\/?([0-9]{2})$/)
+        .required("Expiry required"),
+      cvv: Yup.string()
+        .matches(/^[0-9]+$/)
+        .length(3)
+        .required("CVV required"),
     }),
     onSubmit: () => {
       setLoading(true);
@@ -51,11 +76,16 @@ export default function Checkout() {
       setTimeout(() => {
         setLoading(false);
 
-        clearCart();
+        // 6. اللوجيك الذكي للتنظيف 🧹
+        // لو بنحاسب على السلة كلها (مش شراء مباشر) -> فضي السلة
+        if (!directPurchaseItem) {
+          clearCart();
+        }
+        // لو شراء مباشر -> متقربش للسلة القديمة (سيبها زي ما هي)
 
         notifications.show({
           title: "Order Successful! 🎉",
-          message: "Thank you for your purchase. Your order is on its way!",
+          message: "Thank you for your purchase.",
           color: "teal",
           icon: <IconCheck size={18} />,
           autoClose: 4000,
@@ -68,7 +98,8 @@ export default function Checkout() {
     },
   });
 
-  if (cart.length === 0) {
+  // شرط الإظهار: لو السلة فاضية "وكمان" مفيش شراء مباشر.. يبقى ارجع
+  if (cart.length === 0 && !directPurchaseItem) {
     return (
       <Container size="lg" py="xl" ta="center">
         <Title order={2}>Your cart is empty!</Title>
@@ -88,12 +119,15 @@ export default function Checkout() {
       />
 
       <Title order={2} mb="lg">
-        Checkout
+        {/* تغيير العنوان حسب الحالة */}
+        {directPurchaseItem ? "Checkout (Buy Now)" : "Checkout"}
       </Title>
 
       <Grid gutter="xl">
         <Grid.Col span={{ base: 12, md: 8 }}>
           <form onSubmit={formik.handleSubmit}>
+            {/* ... (نفس كود الفورم بالظبط بدون تغيير) ... */}
+            {/* اختصاراً للكود هنا، سيب الفورم زي ما كانت */}
             <Stack gap="lg">
               <Paper withBorder p="md" radius="md">
                 <Group mb="md">
@@ -122,15 +156,14 @@ export default function Checkout() {
                   <Grid.Col span={6}>
                     <TextInput
                       label="Phone"
-                      placeholder="+20 1xxxxxxxxx"
+                      placeholder="01xxxxxxxxx"
+                      maxLength={11}
                       {...formik.getFieldProps("phone")}
                       error={formik.touched.phone && formik.errors.phone}
                     />
                   </Grid.Col>
                 </Grid>
               </Paper>
-
-              {/* قسم الدفع */}
               <Paper withBorder p="md" radius="md">
                 <Group mb="md">
                   <IconCreditCard size={20} color="#228be6" />
@@ -154,7 +187,9 @@ export default function Checkout() {
                     <TextInput
                       label="Expiry Date"
                       placeholder="MM/YY"
+                      maxLength={5}
                       {...formik.getFieldProps("expiry")}
+                      error={formik.touched.expiry && formik.errors.expiry}
                     />
                   </Grid.Col>
                   <Grid.Col span={6}>
@@ -173,7 +208,7 @@ export default function Checkout() {
           </form>
         </Grid.Col>
 
-        {/* العمود الأيسر: ملخص الطلب */}
+        {/* ملخص الطلب */}
         <Grid.Col span={{ base: 12, md: 4 }}>
           <Paper
             withBorder
@@ -188,7 +223,8 @@ export default function Checkout() {
             </Text>
 
             <Stack gap="sm">
-              {cart.map((item) => (
+              {/* 7. هنا بنلف على القائمة المتحدد سواء كارت أو منتج واحد */}
+              {checkoutItems.map((item) => (
                 <Group key={item.id} justify="space-between" align="flex-start">
                   <div style={{ flex: 1 }}>
                     <Text size="sm" lineClamp={1} fw={500}>
@@ -206,7 +242,6 @@ export default function Checkout() {
             </Stack>
 
             <Divider my="md" />
-
             <Group justify="space-between" mb="xs">
               <Text size="sm" c="dimmed">
                 Subtotal
@@ -223,9 +258,7 @@ export default function Checkout() {
                 Free
               </Text>
             </Group>
-
             <Divider my="sm" variant="dashed" />
-
             <Group justify="space-between" mb="lg">
               <Text size="lg" fw={700}>
                 Total
@@ -242,7 +275,7 @@ export default function Checkout() {
               onClick={formik.handleSubmit}
               loading={loading}
             >
-              Confirm & Pay
+              {directPurchaseItem ? "Pay Now" : "Confirm & Pay"}
             </Button>
           </Paper>
         </Grid.Col>

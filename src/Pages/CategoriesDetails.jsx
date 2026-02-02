@@ -1,21 +1,28 @@
 import Loader from "@/components/ui/Loader";
 import axios from "axios";
 import { Package, RefreshCw } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react"; // 1. ضفنا useContext
 import { FaCartPlus, FaStar } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
+import { CartContext } from "../components/context/CartContext"; // 2. استيراد الكونتكست
+import { notifications } from "@mantine/notifications"; // 3. استيراد الإشعارات
+import { IconCheck } from "@tabler/icons-react";
 
 function CategoriesDetails() {
   const { category } = useParams();
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // 4. استخدام دالة الإضافة من الكونتكست
+  const { addToCart } = useContext(CartContext);
+
   async function getProducts() {
     setIsLoading(true);
     setError(null);
     try {
       const res = await axios.get(
-        `https://dummyjson.com/products/category/${category}`
+        `https://dummyjson.com/products/category/${category}`,
       );
       setProducts(res.data.products);
     } catch (err) {
@@ -25,12 +32,29 @@ function CategoriesDetails() {
       setIsLoading(false);
     }
   }
+
   useEffect(() => {
     getProducts();
-  }, []);
+  }, [category]); // يفضل إضافة category للـ dependencies
 
   const calculateOriginalPrice = (price, discountPercentage) => {
     return (price / (1 - discountPercentage / 100)).toFixed(2);
+  };
+
+  // 👇 5. دالة التعامل مع إضافة المنتج (UX Logic)
+  const handleAddToCart = (e, product) => {
+    e.preventDefault(); // 🛑 أهم سطر: بيمنع اللينك إنه يفتح صفحة المنتج
+
+    addToCart(product, 1); // إضافة للسلة
+
+    // إظهار إشعار النجاح
+    notifications.show({
+      title: "Added to Cart",
+      message: `${product.title} has been added!`,
+      color: "green",
+      icon: <IconCheck size={18} />,
+      autoClose: 2000,
+    });
   };
 
   if (isLoading) {
@@ -40,6 +64,7 @@ function CategoriesDetails() {
       </div>
     );
   }
+
   if (error) {
     return (
       <div className="flex flex-col justify-center items-center min-h-screen bg-linear-to-br from-red-50 to-orange-50 px-4">
@@ -62,6 +87,7 @@ function CategoriesDetails() {
       </div>
     );
   }
+
   if (!products) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 px-4">
@@ -72,6 +98,7 @@ function CategoriesDetails() {
       </div>
     );
   }
+
   return (
     <div className="container mx-auto px-4 py-10">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">
@@ -82,6 +109,7 @@ function CategoriesDetails() {
           <div key={product.id} className="group block h-full">
             <Link to={`/products/${product.id}`}>
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 h-full flex flex-col overflow-hidden cursor-pointer">
+                {/* ... الجزء الخاص بالصورة زي ما هو ... */}
                 <div className="relative w-full h-48 bg-gray-50 flex items-center justify-center p-4">
                   {product.discountPercentage >= 1 && (
                     <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md z-10">
@@ -97,6 +125,7 @@ function CategoriesDetails() {
                 </div>
 
                 <div className="p-4 flex flex-col grow">
+                  {/* ... التقييم والعنوان والوصف زي ما هو ... */}
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex items-center text-yellow-400 text-xs font-bold">
                       <FaStar className="mr-1" />
@@ -125,17 +154,16 @@ function CategoriesDetails() {
                           $
                           {calculateOriginalPrice(
                             product.price,
-                            product.discountPercentage
+                            product.discountPercentage,
                           )}
                         </small>
                       )}
                     </div>
 
+                    {/* 👇 6. ربط الزرار بالدالة الجديدة */}
                     <button
-                      className="w-full border border-blue-600 text-blue-600 font-bold py-2 rounded-full hover:bg-blue-600 hover:text-white transition-colors duration-300 flex items-center justify-center gap-2 text-sm"
-                      onClick={() =>
-                        console.log(`Added ${product.title} to cart`)
-                      }
+                      className="w-full border border-blue-600 text-blue-600 font-bold py-2 rounded-full hover:bg-blue-600 hover:text-white transition-colors duration-300 flex items-center justify-center gap-2 text-sm z-20 relative"
+                      onClick={(e) => handleAddToCart(e, product)}
                       aria-label={`Add ${product.title} to cart`}
                     >
                       <FaCartPlus />

@@ -1,17 +1,16 @@
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom"; // 1. استيراد useNavigate
 import Loader from "../components/ui/Loader";
 import {
   Star,
   ShoppingBag,
-  Heart,
   Check,
   Truck,
   RotateCcw,
   Package,
   RefreshCw,
-  ArrowLeft,
+  Zap, // أيقونة للسرعة
 } from "lucide-react";
 import { CartContext } from "../components/context/CartContext";
 import { notifications } from "@mantine/notifications";
@@ -23,7 +22,9 @@ function ProductDetails() {
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
+
   const { productID } = useParams();
+  const navigate = useNavigate(); // 2. تفعيل الهوك
   const { addToCart } = useContext(CartContext);
 
   const getProduct = async () => {
@@ -40,9 +41,20 @@ function ProductDetails() {
       setIsLoading(false);
     }
   };
+
   useEffect(() => {
     getProduct();
   }, [productID]);
+
+  // 👇 3. دالة الشراء الفوري
+  const handleBuyNow = () => {
+    navigate("/checkout", {
+      state: {
+        product: product,
+        quantity: quantity,
+      },
+    });
+  };
 
   if (isLoading) {
     return (
@@ -260,10 +272,10 @@ function ProductDetails() {
                       notifications.show({
                         title: "Added to Cart!",
                         message: "Check your cart now.",
-                        color: "blue", // نفس اللون الأزرق اللي كنت عامله
-                        icon: <IconThumbUp size={18} />, // بديل احترافي لـ 👍
-                        radius: "md", // عشان الحواف المدورة (rounded)
-                        withBorder: true, // عشان يعمل border خفيف زي القديم
+                        color: "blue",
+                        icon: <IconThumbUp size={18} />,
+                        radius: "md",
+                        withBorder: true,
                         autoClose: 3000,
                       });
                     }}
@@ -272,7 +284,14 @@ function ProductDetails() {
                     <ShoppingBag className="w-6 h-6 group-hover:scale-110 transition-transform" />
                     Add to Cart
                   </button>
-                  <button className="flex-1 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-8 rounded-2xl text-lg transition-all duration-300 shadow-xl hover:shadow-2xl">
+
+                  {/* 👇👇 زرار Buy Now المربوط بالدالة 👇👇 */}
+                  <button
+                    onClick={handleBuyNow}
+                    className="flex-1 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-8 rounded-2xl text-lg transition-all duration-300 shadow-xl hover:shadow-2xl flex items-center justify-center gap-2"
+                  >
+                    <Zap className="w-6 h-6" />{" "}
+                    {/* غيرت الأيقونة لـ Zap (كهرباء) دليل السرعة */}
                     Buy Now
                   </button>
                 </div>
