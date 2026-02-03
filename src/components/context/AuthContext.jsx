@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 
 export const AuthContext = createContext();
 
@@ -48,7 +48,7 @@ export default function AuthProvider({ children }) {
 
   async function signup(fullName, email, password) {
     try {
-      const res = await axios.post("https://dummyjson.com/users/add", {
+      await axios.post("https://dummyjson.com/users/add", {
         firstName: fullName,
         email: email,
         password: password,
