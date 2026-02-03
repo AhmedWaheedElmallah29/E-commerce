@@ -11,6 +11,8 @@ import { Button } from "@mantine/core";
  * Shows price summary and checkout button.
  */
 function Cart() {
+  const { cart, removeFromCart, increaseQuantity, decreaseQuantiy } =
+    useContext(CartContext);
   // Access cart data and actions from CartContext
 
   // Calculate Total Price
@@ -89,7 +91,7 @@ function Cart() {
                 <div className="flex flex-col items-end gap-3">
                   <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-1 border border-gray-200">
                     <button
-                      onClick={() => decreaseQuantity(item.id)}
+                      onClick={() => decreaseQuantiy(item.id)}
                       className="w-8 h-8 flex items-center justify-center bg-white rounded-md shadow-sm hover:bg-gray-100 text-gray-600 transition-colors"
                     >
                       <Minus size={16} />
