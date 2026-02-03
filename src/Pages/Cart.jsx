@@ -74,16 +74,24 @@ function Cart() {
                 </div>
 
                 {/* Product Details */}
-                <div className="flex-1">
+                <div className="flex-1 space-y-1">
                   <h3 className="text-lg font-bold text-gray-900 line-clamp-1">
                     {item.title}
                   </h3>
-                  <p className="text-sm text-gray-500 mb-2">{item.category}</p>
-                  <div className="text-blue-600 font-bold text-xl">
-                    price: ${item.price.toFixed(2)}
-                  </div>
-                  <div className="text-blue-600 font-bold text-xl">
-                    total price: ${(item.price * item.quantity).toFixed(2)}
+                  <p className="text-sm text-gray-500 mb-2 capitalize">
+                    {item.category}
+                  </p>
+
+                  <div className="mt-2">
+                    {/* السعر الإجمالي بحجم كبير ولون مميز */}
+                    <div className="text-xl font-black text-blue-600">
+                      ${(item.price * item.quantity).toFixed(2)}
+                    </div>
+
+                    {/* سعر القطعة الواحدة بحجم صغير ولون رمادي */}
+                    <div className="text-xs text-gray-500 font-medium">
+                      ${item.price.toFixed(2)} / per item
+                    </div>
                   </div>
                 </div>
 
