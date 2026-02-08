@@ -324,7 +324,11 @@ export function NavBar() {
             {user ? (
               <Box>
                 <Group mb="lg">
-                  <Avatar src={user.image} size="lg" radius="xl" />
+                  <Avatar
+                    src={`https://i.pravatar.cc/150?u=${user.email}`}
+                    size="lg"
+                    radius="xl"
+                  />
                   <div>
                     <Text fw={700}>
                       {user.firstName} {user.lastName}
