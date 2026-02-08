@@ -83,12 +83,10 @@ function Cart() {
                   </p>
 
                   <div className="mt-2">
-                    {/* السعر الإجمالي بحجم كبير ولون مميز */}
                     <div className="text-xl font-black text-blue-600">
                       ${(item.price * item.quantity).toFixed(2)}
                     </div>
 
-                    {/* سعر القطعة الواحدة بحجم صغير ولون رمادي */}
                     <div className="text-xs text-gray-500 font-medium">
                       ${item.price.toFixed(2)} / per item
                     </div>

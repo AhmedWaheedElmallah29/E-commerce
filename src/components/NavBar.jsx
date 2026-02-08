@@ -157,7 +157,7 @@ export function NavBar() {
                   >
                     <Group gap={10}>
                       <Avatar
-                        src={user.image}
+                        src={`https://i.pravatar.cc/150?u=${user.email}`}
                         radius="xl"
                         size={38}
                         color="blue"
@@ -166,6 +166,7 @@ export function NavBar() {
                           boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
                         }}
                       >
+                        {/* لو الصورة محملتش، اعرض أول حرف من الاسم */}
                         {!user.image && user.firstName?.charAt(0)}
                       </Avatar>
                       <div style={{ marginRight: 10 }}>
