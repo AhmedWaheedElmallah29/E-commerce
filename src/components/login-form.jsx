@@ -76,13 +76,9 @@ export function LoginForm({ className, ...props }) {
             <LogIn className="w-6 h-6 text-primary" />
           </div>
           <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
-          <CardDescription className="text-base">
-            Choose your preferred login method
-          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={formik.handleSubmit}>
-            {/* 🔴 مكان عرض الخطأ لو الباسورد غلط */}
             {error && (
               <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm text-center font-medium animate-in fade-in slide-in-from-top-2">
                 ⚠️ {error}
@@ -90,22 +86,6 @@ export function LoginForm({ className, ...props }) {
             )}
 
             <FieldGroup>
-              {/* Social Login Buttons (شكل بس) */}
-              <div className="grid grid-cols-2 gap-3">
-                <Button variant="outline" type="button" className="w-full">
-                  Google
-                </Button>
-                <Button variant="outline" type="button" className="w-full">
-                  Apple
-                </Button>
-              </div>
-
-              <FieldSeparator className="my-2">
-                <span className="text-muted-foreground text-sm">
-                  Or continue with
-                </span>
-              </FieldSeparator>
-
               {/* Email Field */}
               <Field>
                 <FieldLabel htmlFor="email" className="text-sm font-medium">
@@ -114,7 +94,7 @@ export function LoginForm({ className, ...props }) {
                 </FieldLabel>
                 <Input
                   id="email"
-                  type="text" // خليناه text عشان يقبل username
+                  type="text"
                   name="email"
                   placeholder="john@example.com or emilys"
                   value={formik.values.email}
